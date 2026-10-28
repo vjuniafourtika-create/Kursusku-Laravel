@@ -1,79 +1,110 @@
 
-<!doctype html>
-<html lang="id">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+@extends('layouts.app')
 
-    <title>{{ $siteName }}</title>
+@section('title', 'Beranda - KursusKu')
 
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-</head>
+@section('content')
 
-<body>
+<div class="container py-4">
 
-    <header class="navbar">
-        <div class="container">
+    {{-- Bagian utama Beranda --}}
+    <section class="row align-items-center py-5">
 
-            <strong>{{ $siteName }}</strong>
+        <div class="col-md-6 mb-4">
 
-            <nav>
-                <a href="{{ route('home') }}" style="color:white">
-                    Beranda
-                </a>
-            </nav>
+            <p class="text-primary fw-bold">
+                Belajar Web Secara Bertahap
+            </p>
+
+            <h1 class="display-5 fw-bold">
+                Bangun kemampuan web dari PHP sampai Laravel.
+            </h1>
+
+            <p class="lead mt-3">
+                KursusKu menyediakan latihan terarah untuk pemula
+                agar kamu dapat belajar pemrograman web secara bertahap.
+            </p>
+
+            <a href="{{ route('enrollments.create') }}"
+               class="btn btn-primary btn-lg mt-2">
+                Daftar Sekarang
+            </a>
 
         </div>
-    </header>
 
-    <main class="container">
-
-        <section class="hero">
-
-            <div>
-                <p>Belajar Web Secara Bertahap</p>
-
-                <h1>
-                    Bangun kemampuan web dari PHP sampai Laravel.
-                </h1>
-
-                <p>
-                    KursusKu menyediakan latihan terarah untuk pemula.
-                </p>
-            </div>
+        <div class="col-md-6 text-center">
 
             <img
                 src="{{ asset('images/hero-kursus.jpg') }}"
                 alt="Ilustrasi kelas KursusKu"
+                class="img-fluid rounded shadow"
             >
 
-        </section>
+        </div>
 
-        <section>
-            
-            <h2>Program Belajar Unggulan</h2>
+    </section>
 
-            <div class="course-grid">
 
-                @foreach ($featured as $course)
+    {{-- Katalog kursus lama tetap dipertahankan --}}
+    <section class="py-4">
 
-                    <article class="card">
+        <div class="text-center mb-4">
 
-                        <small>{{ $course['code'] }}</small>
+            <h2 class="fw-bold">
+                Program Belajar Unggulan
+            </h2>
 
-                        <h3>{{ $course['name'] }}</h3>
+            <p class="text-muted">
+                Pilih program belajar yang sesuai dengan kebutuhanmu.
+            </p>
 
-                        <p>{{ $course['description'] }}</p>
+        </div>
+
+        <div class="row g-4">
+
+            @foreach ($featured as $course)
+
+                <div class="col-md-4">
+
+                    <article class="card h-100 shadow-sm">
+
+                        <div class="card-body">
+
+                            <small class="text-primary fw-bold">
+                                {{ $course['code'] }}
+                            </small>
+
+                            <h3 class="h5 mt-2">
+                                {{ $course['name'] }}
+                            </h3>
+
+                            <p class="card-text">
+                                {{ $course['description'] }}
+                            </p>
+
+                        </div>
+
+                        <div class="card-footer bg-white border-0 pb-3">
+
+                            <a
+                                href="{{ route('enrollments.create') }}"
+                                class="btn btn-outline-primary"
+                            >
+                                Daftar Kursus
+                            </a>
+
+                        </div>
 
                     </article>
 
-                @endforeach
+                </div>
 
-            </div>
+            @endforeach
 
-        </section>
+        </div>
 
-    </main>
+    </section>
 
-</body>
-</html>
+</div>
+
+@endsection
