@@ -1,6 +1,7 @@
 
 <?php
 
+use App\Http\Controllers\CourseController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -52,6 +53,12 @@ Route::get('/pendaftaran', function () {
 })->name('enrollments.create');
 
 
+/*
+|--------------------------------------------------------------------------
+| Informasi Ketersediaan Kursus untuk Ajax
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/courses/{course}/availability', function (int $course) {
     $availability = [
         1 => [
@@ -72,7 +79,6 @@ Route::get('/courses/{course}/availability', function (int $course) {
 
     return response()->json($availability[$course]);
 })->name('courses.availability');
-
 
 
 /*
@@ -99,27 +105,8 @@ Route::post('/pendaftaran/preview', function (Request $request) {
 
 /*
 |--------------------------------------------------------------------------
-| Informasi Ketersediaan Kursus untuk Ajax
+| CRUD Kursus
 |--------------------------------------------------------------------------
 */
 
-Route::get('/courses/{course}/availability', function (int $course) {
-    $availability = [
-        1 => [
-            'course' => 'Web Dasar',
-            'remaining' => 12,
-        ],
-        2 => [
-            'course' => 'PHP Dasar',
-            'remaining' => 8,
-        ],
-        3 => [
-            'course' => 'Laravel Fundamental',
-            'remaining' => 4,
-        ],
-    ];
-
-    abort_unless(isset($availability[$course]), 404);
-
-    return response()->json($availability[$course]);
-})->name('courses.availability');
+Route::resource('courses', CourseController::class);
