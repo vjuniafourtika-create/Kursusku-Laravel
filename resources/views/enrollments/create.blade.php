@@ -1,135 +1,282 @@
 
 @extends('layouts.app')
 
-@section('title', 'Pendaftaran Kursus - KursusKu')
-
 @section('content')
+<style>
+    .kk-enroll {
+        --kk-blue: #2563eb;
+        --kk-dark: #142d59;
+        --kk-muted: #64748b;
+        max-width: 1000px;
+        margin: 30px auto;
+        padding: 0 20px;
+        color: #172554;
+    }
 
-<div class="container py-5">
+    .kk-enroll * {
+        box-sizing: border-box;
+    }
 
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-7">
+    .kk-hero {
+        position: relative;
+        overflow: hidden;
+        padding: 34px;
+        border-radius: 24px;
+        color: white;
+        background: linear-gradient(125deg, #102a56, #2563eb 65%, #60a5fa);
+        box-shadow: 0 16px 36px rgba(37, 99, 235, .18);
+    }
 
-            <div class="card shadow-sm">
-                <div class="card-body p-4">
+    .kk-hero h1 {
+        margin: 0 0 10px;
+        font-size: clamp(26px, 4vw, 36px);
+        font-weight: 800;
+    }
 
-                    <h1 class="h3 fw-bold mb-2">
-                        Formulir Pendaftaran Kursus
-                    </h1>
+    .kk-hero p {
+        margin: 0;
+        color: #e0ecff;
+        line-height: 1.7;
+    }
 
-                    <p class="text-muted mb-4">
-                        Lengkapi data berikut untuk mendaftar di KursusKu.
-                    </p>
+    .kk-card {
+        margin-top: 24px;
+        padding: 28px;
+        border: 1px solid #dbeafe;
+        border-radius: 22px;
+        background: white;
+        box-shadow: 0 10px 30px rgba(15, 45, 90, .07);
+    }
 
-                    @if (session('success'))
-                        <div class="alert alert-success">
-                            {{ session('success') }}
-                        </div>
-                    @endif
+    .kk-card h2 {
+        margin: 0 0 8px;
+        color: #173568;
+        font-size: 22px;
+    }
 
-                    @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <strong>Mohon periksa kembali data kamu:</strong>
-                            <ul class="mb-0 mt-2">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
+    .kk-help {
+        margin: 0 0 24px;
+        color: var(--kk-muted);
+        line-height: 1.6;
+    }
 
-                    <form
-                        action="{{ route('enrollments.preview') }}"
-                        method="POST"
-                    >
-                        @csrf
+    .kk-field {
+        margin-bottom: 22px;
+    }
 
-                        <div class="mb-3">
-                            <label for="name" class="form-label">
-                                Nama Lengkap
-                            </label>
+    .kk-field label {
+        display: block;
+        margin-bottom: 9px;
+        font-weight: 700;
+        color: #1e3a68;
+    }
 
-                            <input
-                                type="text"
-                                id="name"
-                                name="name"
-                                class="form-control"
-                                value="{{ old('name') }}"
-                                placeholder="Masukkan nama lengkap"
-                                required
-                            >
-                        </div>
+    .kk-field select {
+        display: block;
+        width: 100%;
+        min-height: 48px;
+        padding: 12px 14px;
+        border: 1px solid #cbdaf2;
+        border-radius: 12px;
+        background: #f8fbff;
+        color: #172554;
+        font: inherit;
+    }
 
-                        <div class="mb-3">
-                            <label for="email" class="form-label">
-                                Email
-                            </label>
+    .kk-field select:focus {
+        outline: 3px solid #bfdbfe;
+        border-color: #2563eb;
+    }
 
-                            <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                class="form-control"
-                                value="{{ old('email') }}"
-                                placeholder="nama@email.com"
-                                required
-                            >
-                        </div>
+    .kk-error {
+        margin-top: 8px;
+        color: #b91c1c;
+        font-size: 14px;
+    }
 
-                        <div class="mb-3">
-                            <label for="course_id" class="form-label">
-                                Pilih Kursus
-                            </label>
+    .kk-notice {
+        margin-bottom: 20px;
+        padding: 14px 16px;
+        border-radius: 12px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        border: 1px solid #bfdbfe;
+    }
 
-                            <select
-                                id="course_id"
-                                name="course_id"
-                                class="form-select"
-                                required
-                            >
-                                <option value="">
-                                    -- Pilih kursus --
-                                </option>
+    .kk-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 28px;
+    }
 
-                                @foreach ($courses as $id => $course)
-                                    <option
-                                        value="{{ $id }}"
-                                        @selected(old('course_id') == $id)
-                                    >
-                                        {{ $course['name'] }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
+    .kk-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        padding: 12px 20px;
+        border-radius: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        border: 0;
+        cursor: pointer;
+        transition: .2s ease;
+    }
 
-                        <div
-                            id="availability"
-                            class="alert alert-info d-none"
-                            aria-live="polite"
-                        ></div>
+    .kk-btn-primary {
+        color: white;
+        background: linear-gradient(120deg, #1d4ed8, #3b82f6);
+        box-shadow: 0 7px 16px rgba(37, 99, 235, .2);
+    }
 
-                        <button
-                            type="submit"
-                            class="btn btn-primary w-100"
+    .kk-btn-primary:hover {
+        background: #1e40af;
+        transform: translateY(-1px);
+    }
+
+    .kk-btn-secondary {
+        color: #1d4ed8;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+    }
+
+    @media (max-width: 600px) {
+        .kk-hero, .kk-card {
+            padding: 22px;
+        }
+
+        .kk-actions .kk-btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="kk-enroll">
+    <section class="kk-hero">
+        <h1>Pendaftaran Kursus</h1>
+        <p>
+            Mulai perjalanan belajar kamu bersama KursusKu.
+            Pilih peserta dan kursus yang tersedia untuk membuat
+            pendaftaran baru.
+        </p>
+    </section>
+
+    <section class="kk-card">
+        <h2>Form Enrollment</h2>
+        <p class="kk-help">
+            Pastikan peserta dan kursus yang dipilih sudah benar.
+            Status pendaftaran akan otomatis menjadi Registered.
+        </p>
+
+        @if ($errors->any())
+            <div class="kk-notice" role="alert">
+                <strong>Pendaftaran belum dapat disimpan.</strong>
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        @if ($participants->isEmpty())
+            <div class="kk-notice">
+                Belum ada peserta. Tambahkan peserta terlebih dahulu.
+            </div>
+        @endif
+
+        @if ($courses->isEmpty())
+            <div class="kk-notice">
+                Belum ada kursus aktif. Periksa data Course kamu.
+            </div>
+        @endif
+
+        <form
+            method="POST"
+            action="{{ route('enrollments.store') }}"
+        >
+            @csrf
+
+            <div class="kk-field">
+                <label for="participant_id">
+                    Pilih Peserta
+                </label>
+
+                <select
+                    id="participant_id"
+                    name="participant_id"
+                    required
+                >
+                    <option value="">-- Pilih peserta --</option>
+
+                    @foreach ($participants as $participant)
+                        <option
+                            value="{{ $participant->id }}"
+                            @selected(
+                                old('participant_id') == $participant->id
+                            )
                         >
-                            Periksa Pendaftaran
-                        </button>
+                            {{ $participant->name }}
+                            — {{ $participant->email }}
+                        </option>
+                    @endforeach
+                </select>
 
-                        <a
-                            href="{{ route('home') }}"
-                            class="btn btn-outline-secondary w-100 mt-2"
-                        >
-                            Kembali ke Beranda
-                        </a>
-
-                    </form>
-
-                </div>
+                @error('participant_id')
+                    <div class="kk-error">{{ $message }}</div>
+                @enderror
             </div>
 
-        </div>
-    </div>
+            <div class="kk-field">
+                <label for="course_id">
+                    Pilih Kursus
+                </label>
 
+                <select
+                    id="course_id"
+                    name="course_id"
+                    required
+                >
+                    <option value="">-- Pilih kursus --</option>
+
+                    @foreach ($courses as $course)
+                        <option
+                            value="{{ $course->id }}"
+                            @selected(
+                                old('course_id') == $course->id
+                            )
+                        >
+                            {{ $course->code }}
+                            — {{ $course->name }}
+                        </option>
+                    @endforeach
+                </select>
+
+                @error('course_id')
+                    <div class="kk-error">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="kk-actions">
+                <button
+                    type="submit"
+                    class="kk-btn kk-btn-primary"
+                    @disabled(
+                        $participants->isEmpty() || $courses->isEmpty()
+                    )
+                >
+                    Simpan Pendaftaran
+                </button>
+
+                <a
+                    href="{{ route('enrollments.index') }}"
+                    class="kk-btn kk-btn-secondary"
+                >
+                    Lihat Laporan
+                </a>
+            </div>
+        </form>
+    </section>
 </div>
-
 @endsection
