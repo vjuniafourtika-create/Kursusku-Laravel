@@ -1,0 +1,46 @@
+AI USAGE LOG
+PROYEK KURSUSKU LARAVEL
+PERTEMUAN 11
+
+Nama: Viona Junia Fourtika
+Mata Kuliah: Pemrograman Web III
+Project: KursusKu Laravel
+
+1. Prompt: Bagaimana cara membuat halaman detail Course pada Laravel?
+   Saran AI: Membuat method show pada CourseController dan file show.blade.php.
+   Dipakai?: Ya.
+   Alasan: Membantu menampilkan detail data kursus.
+
+2. Prompt: Bagaimana cara membuat validasi menggunakan Form Request?
+   Saran AI: Menggunakan StoreCourseRequest dan UpdateCourseRequest.
+   Dipakai?: Ya.
+   Alasan: Memisahkan aturan validasi dari controller.
+
+3. Prompt: Mengapa muncul error pada saat menyimpan perubahan Course?
+   Saran AI: Memeriksa aturan validasi, route, dan controller.
+   Dipakai?: Ya, sebagai panduan perbaikan.
+   Alasan: Membantu menemukan penyebab error.
+
+4. Prompt: Bagaimana cara membuat halaman edit dan update Course?
+   Saran AI: Membuat form edit dengan old() dan proses update menggunakan validated().
+   Dipakai?: Ya.
+   Alasan: Membantu proses perubahan data kursus.
+
+5. Prompt: Bagaimana cara menguji validasi kuota 1 dan 500?
+   Saran AI: Menguji batas minimum dan maksimum kuota.
+   Dipakai?: Ya.
+   Alasan: Memastikan aturan kuota berjalan dengan benar.
+
+6. Prompt: Bagaimana cara menyusun Test Matrix?
+   Saran AI: Membuat tabel berisi 15 kasus pengujian dengan Expected, Actual, Status, dan Bukti.
+   Dipakai?: Ya.
+   Alasan: Membantu mencatat hasil pengujian aplikasi.
+
+7. Prompt: Bagaimana cara mengatasi error View [test-matrix] not found?
+   Saran AI: Memeriksa lokasi dan nama file Blade.
+   Dipakai?: Tidak untuk halaman Test Matrix Laravel karena pencatatan Test Matrix dipilih menggunakan Microsoft Word.
+   Alasan: Menyesuaikan metode dokumentasi yang digunakan.
+
+KESIMPULAN:
+AI digunakan sebagai alat bantu untuk memahami konsep Laravel CRUD, menyelesaikan kendala pemrograman, dan menyusun dokumentasi pengujian. 
+Seluruh kode dan hasil pengujian tetap diperiksa secara mandiri.

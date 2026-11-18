@@ -11,7 +11,7 @@
     }
 
     .course-container {
-        max-width: 1150px;
+        max-width: 1250px;
         margin: auto;
     }
 
@@ -165,6 +165,51 @@
         padding: 14px 18px;
     }
 
+    .action-buttons {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+    }
+
+    .btn-detail {
+        background: #eaf2ff;
+        color: #2563eb;
+        border: 1px solid #bfdbfe;
+    }
+
+    .btn-detail:hover {
+        background: #2563eb;
+        color: white;
+    }
+
+    .btn-edit {
+        background: #fff7df;
+        color: #a16207;
+        border: 1px solid #fde68a;
+    }
+
+    .btn-edit:hover {
+        background: #f59e0b;
+        color: white;
+    }
+
+    .btn-delete {
+        background: #fee2e2;
+        color: #dc2626;
+        border: 1px solid #fecaca;
+    }
+
+    .btn-delete:hover {
+        background: #dc2626;
+        color: white;
+    }
+
+    .action-buttons .btn {
+        border-radius: 7px;
+        font-weight: 600;
+        font-size: 12px;
+    }
+
     @media (max-width: 600px) {
         .course-card {
             padding: 20px 14px;
@@ -223,11 +268,14 @@
                             <th>Kuota</th>
                             <th>Tanggal Mulai</th>
                             <th>Status</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
 
                     <tbody>
+
                         @forelse ($courses as $course)
+
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
 
@@ -249,37 +297,80 @@
                                     </span>
                                 </td>
 
-                                <td>{{ $course->quota }} peserta</td>
+                                <td>
+                                    {{ $course->quota }} peserta
+                                </td>
 
                                 <td>
-                                    {{ $course->start_date->format('d/m/Y') }}
+                                    {{ $course->start_date?->format('d/m/Y') ?? '-' }}
                                 </td>
 
                                 <td>
                                     @if ($course->status == 'open')
+
                                         <span class="status-badge status-open">
                                             Dibuka
                                         </span>
+
                                     @elseif ($course->status == 'draft')
+
                                         <span class="status-badge status-draft">
                                             Draft
                                         </span>
+
                                     @else
+
                                         <span class="status-badge status-closed">
                                             Ditutup
                                         </span>
+
                                     @endif
                                 </td>
+
+                                {{-- TOMBOL AKSI --}}
+                                <td>
+                                    <div class="action-buttons">
+
+                                        <a href="{{ route('courses.show', $course) }}"
+                                           class="btn btn-sm btn-detail">
+                                            Detail
+                                        </a>
+
+                                        <a href="{{ route('courses.edit', $course) }}"
+                                           class="btn btn-sm btn-edit">
+                                            Edit
+                                        </a>
+
+                                        <form method="POST"
+                                              action="{{ route('courses.destroy', $course) }}"
+                                              onsubmit="return confirm('Apakah kamu yakin ingin menghapus kursus ini?')">
+
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-delete">
+                                                Hapus
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+                                </td>
+
                             </tr>
 
                         @empty
+
                             <tr>
-                                <td colspan="7" class="empty-data">
+                                <td colspan="8" class="empty-data">
                                     Belum ada data kursus.
                                     Silakan tambahkan kursus terlebih dahulu.
                                 </td>
                             </tr>
+
                         @endforelse
+
                     </tbody>
 
                 </table>

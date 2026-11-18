@@ -110,3 +110,26 @@ Route::post('/pendaftaran/preview', function (Request $request) {
 */
 
 Route::resource('courses', CourseController::class);
+
+
+Route::get('/test-matrix', function () {
+    $testCases = [
+        ['no' => 1, 'case' => 'Kode kursus duplikat', 'expected' => 'Ditolak karena kode sudah digunakan'],
+        ['no' => 2, 'case' => 'Nama kursus kosong', 'expected' => 'Ditolak karena nama wajib diisi'],
+        ['no' => 3, 'case' => 'Nama kursus terlalu pendek (AI)', 'expected' => 'Ditolak karena nama minimal 3 karakter'],
+        ['no' => 4, 'case' => 'Biaya negatif (-1000)', 'expected' => 'Ditolak karena biaya minimal 0'],
+        ['no' => 5, 'case' => 'Biaya bukan angka (abc)', 'expected' => 'Ditolak karena biaya harus berupa angka'],
+        ['no' => 6, 'case' => 'Kuota 0', 'expected' => 'Ditolak karena kuota minimal 1'],
+        ['no' => 7, 'case' => 'Kuota 501', 'expected' => 'Ditolak karena kuota maksimal 500'],
+        ['no' => 8, 'case' => 'Kuota 1', 'expected' => 'Diterima karena kuota berada pada batas minimum'],
+        ['no' => 9, 'case' => 'Kuota 500', 'expected' => 'Diterima karena kuota berada pada batas maksimum'],
+        ['no' => 10, 'case' => 'Tanggal tidak valid', 'expected' => 'Ditolak karena format tanggal tidak valid'],
+        ['no' => 11, 'case' => 'Status tidak valid (active)', 'expected' => 'Ditolak karena status tidak sesuai pilihan'],
+        ['no' => 12, 'case' => 'Update menggunakan kode yang sama', 'expected' => 'Diterima karena kode milik kursus tersebut'],
+        ['no' => 13, 'case' => 'Update menggunakan kode milik kursus lain', 'expected' => 'Ditolak karena kode sudah digunakan'],
+        ['no' => 14, 'case' => 'Update data kursus normal', 'expected' => 'Diterima dan data berhasil diperbarui'],
+        ['no' => 15, 'case' => 'Hapus kursus percobaan', 'expected' => 'Diterima dan data berhasil dihapus'],
+    ];
+
+    return view('test-matrix', compact('testCases'));
+})->name('test-matrix');
