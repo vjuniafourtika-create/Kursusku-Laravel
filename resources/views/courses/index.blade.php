@@ -80,6 +80,67 @@
         transform: translateY(-2px);
     }
 
+    /* AREA PENCARIAN DAN FILTER */
+    .filter-box {
+        background: #f4f8ff;
+        border: 1px solid #dce8fa;
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 25px;
+    }
+
+    .filter-label {
+        color: #173b79;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .filter-input {
+        border: 1px solid #cbdaf0;
+        border-radius: 9px;
+        padding: 11px 13px;
+        min-height: 45px;
+    }
+
+    .filter-input:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    .btn-search {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
+        border: none;
+        border-radius: 9px;
+        padding: 11px 20px;
+        font-weight: 600;
+        min-height: 45px;
+    }
+
+    .btn-search:hover {
+        background: #1e40af;
+        color: white;
+    }
+
+    .btn-reset {
+        background: white;
+        color: #475569;
+        border: 1px solid #cbd5e1;
+        border-radius: 9px;
+        padding: 11px 18px;
+        font-weight: 600;
+        text-decoration: none;
+        min-height: 45px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-reset:hover {
+        background: #eaf2ff;
+        color: #1d4ed8;
+    }
+
     .table-responsive {
         border-radius: 12px;
         overflow-x: auto;
@@ -210,6 +271,38 @@
         font-size: 12px;
     }
 
+    /* INFORMASI JUMLAH DATA */
+    .course-summary {
+        color: #64748b;
+        font-size: 14px;
+        margin-top: 20px;
+    }
+
+    .course-summary strong {
+        color: #1d4ed8;
+    }
+
+    /* PAGINATION */
+    .pagination {
+        margin-bottom: 0;
+    }
+
+    .pagination .page-link {
+        color: #2563eb;
+        border-color: #dbeafe;
+    }
+
+    .pagination .page-item.active .page-link {
+        background: #2563eb;
+        border-color: #2563eb;
+        color: white;
+    }
+
+    .pagination .page-link:hover {
+        background: #eaf2ff;
+        color: #1d4ed8;
+    }
+
     @media (max-width: 600px) {
         .course-card {
             padding: 20px 14px;
@@ -231,6 +324,7 @@
 
         <div class="course-card">
 
+            {{-- JUDUL HALAMAN --}}
             <div class="course-heading">
 
                 <div class="heading-title">
@@ -250,13 +344,89 @@
 
             </div>
 
+            {{-- NOTIFIKASI BERHASIL --}}
             @if (session('success'))
                 <div class="alert-success mb-4">
                     ✓ {{ session('success') }}
                 </div>
             @endif
 
+            {{-- FORM PENCARIAN DAN FILTER --}}
+            <div class="filter-box">
+
+                <form method="GET" action="{{ route('courses.index') }}">
+
+                    <div class="row g-3 align-items-end">
+
+                        {{-- PENCARIAN --}}
+                        <div class="col-md-6">
+                            <label class="filter-label">
+                                Cari Kursus
+                            </label>
+
+                            <input
+                                type="search"
+                                name="q"
+                                value="{{ $search }}"
+                                class="form-control filter-input"
+                                placeholder="Masukkan kode atau nama kursus..."
+                            >
+                        </div>
+
+                        {{-- FILTER STATUS --}}
+                        <div class="col-md-3">
+                            <label class="filter-label">
+                                Filter Status
+                            </label>
+
+                            <select
+                                name="status"
+                                class="form-select filter-input"
+                            >
+                                <option value="">Semua Status</option>
+
+                                <option value="open"
+                                    {{ $status === 'open' ? 'selected' : '' }}>
+                                    Dibuka (Open)
+                                </option>
+
+                                <option value="closed"
+                                    {{ $status === 'closed' ? 'selected' : '' }}>
+                                    Ditutup (Closed)
+                                </option>
+
+                                <option value="draft"
+                                    {{ $status === 'draft' ? 'selected' : '' }}>
+                                    Draft
+                                </option>
+                            </select>
+                        </div>
+
+                        {{-- TOMBOL CARI DAN RESET --}}
+                        <div class="col-md-3 d-flex gap-2">
+
+                            <button type="submit" class="btn-search">
+                                Cari
+                            </button>
+
+                            <a
+                                href="{{ route('courses.index') }}"
+                                class="btn-reset"
+                            >
+                                Reset
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            {{-- TABEL DATA KURSUS --}}
             <div class="table-responsive">
+
                 <table class="course-table">
 
                     <thead>
@@ -277,7 +447,10 @@
                         @forelse ($courses as $course)
 
                             <tr>
-                                <td>{{ $loop->iteration }}</td>
+
+                                <td>
+                                    {{ $courses->firstItem() + $loop->index }}
+                                </td>
 
                                 <td>
                                     <span class="course-code">
@@ -306,6 +479,7 @@
                                 </td>
 
                                 <td>
+
                                     @if ($course->status == 'open')
 
                                         <span class="status-badge status-open">
@@ -325,31 +499,40 @@
                                         </span>
 
                                     @endif
+
                                 </td>
 
                                 {{-- TOMBOL AKSI --}}
                                 <td>
                                     <div class="action-buttons">
 
-                                        <a href="{{ route('courses.show', $course) }}"
-                                           class="btn btn-sm btn-detail">
+                                        <a
+                                            href="{{ route('courses.show', $course) }}"
+                                            class="btn btn-sm btn-detail"
+                                        >
                                             Detail
                                         </a>
 
-                                        <a href="{{ route('courses.edit', $course) }}"
-                                           class="btn btn-sm btn-edit">
+                                        <a
+                                            href="{{ route('courses.edit', $course) }}"
+                                            class="btn btn-sm btn-edit"
+                                        >
                                             Edit
                                         </a>
 
-                                        <form method="POST"
-                                              action="{{ route('courses.destroy', $course) }}"
-                                              onsubmit="return confirm('Apakah kamu yakin ingin menghapus kursus ini?')">
+                                        <form
+                                            method="POST"
+                                            action="{{ route('courses.destroy', $course) }}"
+                                            onsubmit="return confirm('Apakah kamu yakin ingin menghapus kursus ini?')"
+                                        >
 
                                             @csrf
                                             @method('DELETE')
 
-                                            <button type="submit"
-                                                    class="btn btn-sm btn-delete">
+                                            <button
+                                                type="submit"
+                                                class="btn btn-sm btn-delete"
+                                            >
                                                 Hapus
                                             </button>
 
@@ -364,8 +547,14 @@
 
                             <tr>
                                 <td colspan="8" class="empty-data">
-                                    Belum ada data kursus.
-                                    Silakan tambahkan kursus terlebih dahulu.
+
+                                    <div class="mb-2">
+                                        <strong>Tidak Ada Kursus Ditemukan</strong>
+                                    </div>
+
+                                    Kursus yang sesuai dengan pencarian
+                                    atau filter belum tersedia.
+
                                 </td>
                             </tr>
 
@@ -374,14 +563,25 @@
                     </tbody>
 
                 </table>
+
             </div>
 
-            <div class="mt-3 text-secondary">
-                Total kursus:
-                <strong>{{ $courses->count() }} kursus</strong>
+            {{-- INFORMASI JUMLAH DATA --}}
+            <div class="course-summary">
+                Menampilkan
+                <strong>{{ $courses->count() }}</strong>
+                dari
+                <strong>{{ $courses->total() }}</strong>
+                kursus.
+            </div>
+
+            {{-- PAGINATION --}}
+            <div class="mt-4 d-flex justify-content-center">
+                {{ $courses->links() }}
             </div>
 
         </div>
+
     </div>
 </div>
 
