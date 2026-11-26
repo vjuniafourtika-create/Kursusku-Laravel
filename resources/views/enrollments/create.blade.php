@@ -186,11 +186,11 @@
             </div>
         @endif
 
-        @if ($courses->isEmpty())
-            <div class="kk-notice">
-                Belum ada kursus aktif. Periksa data Course kamu.
-            </div>
-        @endif
+       @if ($participants->isEmpty())
+    <div class="kk-notice">
+        Belum ada peserta. Tambahkan peserta terlebih dahulu.
+    </div>
+@endif
 
         <form
             method="POST"

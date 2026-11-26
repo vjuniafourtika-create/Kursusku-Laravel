@@ -2,9 +2,10 @@
 <?php
 
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\EnrollmentController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
-use App\Http\Controllers\EnrollmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,19 +40,59 @@ Route::get('/', function () {
 
 /*
 |--------------------------------------------------------------------------
+| Sistem Login
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('guest')->group(function () {
+
+    Route::get('/login', [AuthController::class, 'showLogin'])
+        ->name('login');
+
+    Route::post('/login', [AuthController::class, 'login'])
+        ->name('login.store');
+
+    Route::get('/forgot-password', function () {
+        return view('auth.forgot-password');
+    })->name('password.request');
+
+    Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail'])
+        ->name('password.email');
+
+    Route::get('/reset-password/{token}', [AuthController::class, 'showResetForm'])
+        ->name('password.reset');
+
+    Route::post('/reset-password', [AuthController::class, 'resetPassword'])
+        ->name('password.update');
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| Sistem Logout dan Profil
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth')->group(function () {
+
+    Route::post('/logout', [AuthController::class, 'logout'])
+        ->name('logout');
+
+    Route::get('/profile', function () {
+        return view('profile');
+    })->name('profile');
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
 | Halaman Formulir Pendaftaran
 |--------------------------------------------------------------------------
 */
 
-Route::get('/pendaftaran', function () {
-    $courses = [
-        1 => ['name' => 'Web Dasar'],
-        2 => ['name' => 'PHP Dasar'],
-        3 => ['name' => 'Laravel Fundamental'],
-    ];
-
-    return view('enrollments.create', compact('courses'));
-})->name('enrollments.create');
+Route::get('/pendaftaran', [EnrollmentController::class, 'create'])
+    ->name('enrollments.create');
 
 
 /*
@@ -61,6 +102,7 @@ Route::get('/pendaftaran', function () {
 */
 
 Route::get('/courses/{course}/availability', function (int $course) {
+
     $availability = [
         1 => [
             'course' => 'Web Dasar',
@@ -79,6 +121,7 @@ Route::get('/courses/{course}/availability', function (int $course) {
     abort_unless(isset($availability[$course]), 404);
 
     return response()->json($availability[$course]);
+
 })->name('courses.availability');
 
 
@@ -89,6 +132,7 @@ Route::get('/courses/{course}/availability', function (int $course) {
 */
 
 Route::post('/pendaftaran/preview', function (Request $request) {
+
     $data = $request->validate([
         'name' => ['required', 'string', 'min:3', 'max:100'],
         'email' => ['required', 'email'],
@@ -101,6 +145,7 @@ Route::post('/pendaftaran/preview', function (Request $request) {
             'Formulir berhasil divalidasi. Database akan ditambahkan pada pertemuan berikutnya.'
         )
         ->withInput();
+
 })->name('enrollments.preview');
 
 
@@ -112,6 +157,12 @@ Route::post('/pendaftaran/preview', function (Request $request) {
 
 Route::resource('courses', CourseController::class);
 
-Route::resource('enrollments', EnrollmentController::class)
-    ->only(['index', 'create', 'store']);
 
+/*
+|--------------------------------------------------------------------------
+| CRUD Pendaftaran
+|--------------------------------------------------------------------------
+*/
+
+Route::resource('enrollments', EnrollmentController::class)
+    ->only(['index', 'store']);
